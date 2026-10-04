@@ -1,0 +1,73 @@
+{
+  "name": "motion-mcp-server",
+  "version": "2.10.0",
+  "description": "MCP server for Motion API integration - manage projects, tasks, and workspaces from LLMs",
+  "main": "dist/mcp-server.js",
+  "bin": {
+    "motionmcp": "dist/mcp-server.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "motion",
+    "api",
+    "task-management",
+    "project-management",
+    "llm",
+    "ai"
+  ],
+  "author": "Devon Hillard devon@digitalsanctuary.com",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/devondragon/MotionMCP.git"
+  },
+  "homepage": "https://github.com/devondragon/MotionMCP",
+  "bugs": {
+    "url": "https://github.com/devondragon/MotionMCP/issues"
+  },
+  "type": "commonjs",
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.30.0",
+    "@modelcontextprotocol/server": "2.0.0",
+    "agents": "^0.21.0",
+    "ajv": "^8.17.1",
+    "axios": "^1.9.0",
+    "dotenv": "^17.2.3",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "^0.22.0",
+    "@cloudflare/workers-types": "^5.20260821.1",
+    "@types/node": "^24.2.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2",
+    "vitest": "^4.0.18",
+    "wrangler": "^4.0.0"
+  },
+  "scripts": {
+    "generate:types": "npx tsx scripts/generate-types.ts",
+    "build": "npm run generate:types && tsc",
+    "mcp": "node dist/mcp-server.js",
+    "mcp:dev": "ts-node src/mcp-server.ts",
+    "watch": "tsc --watch",
+    "type-check": "tsc --noEmit",
+    "test": "vitest run",
+    "test:worker": "vitest run --project worker",
+    "test:types": "tsc --noEmit -p tsconfig.tests.json && tsc --noEmit -p tests/worker/tsconfig.json",
+    "test:integration": "DOTENV_CONFIG_QUIET=true vitest run --config vitest.integration.config.ts",
+    "test:integration:watch": "vitest --config vitest.integration.config.ts",
+    "worker:dev": "wrangler dev",
+    "worker:deploy": "wrangler deploy",
+    "worker:type-check": "tsc --noEmit -p tsconfig.worker.json",
+    "prepublishOnly": "npm run type-check && npm run build"
+  }
+}
