@@ -164,6 +164,18 @@ Manage Motion projects. Workspace and project names are fuzzy-matched, and the s
 {"operation": "create", "name": "New Project", "workspaceName": "Personal"}
 ```
 
+`create` also accepts `dueDate` and `priority`. To create from a project template, pass `projectDefinitionId` plus a `stages` array with one entry per template stage, in order (the count must match the template). Read the IDs from an existing project via `get`, which returns `ProjectDefinitionId` and `Stages[].stageDefinitionId`.
+
+```json
+{"operation": "create", "name": "Client Onboarding", "workspaceName": "Personal",
+ "projectDefinitionId": "pde_...",
+ "stages": [
+   {"stageDefinitionId": "std_...", "dueDate": "2026-11-01"},
+   {"stageDefinitionId": "std_...", "dueDate": "2026-11-15",
+    "variableInstances": [{"variableName": "Owner", "value": "<user ID>"}]}
+ ]}
+```
+
 ### motion_workspaces
 **Operations:** `list`, `get`
 

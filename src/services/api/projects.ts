@@ -248,6 +248,23 @@ export async function createProject(ctx: ResourceContext, projectData: Partial<M
       apiMessage: isAxiosError(error) ? error.response?.data?.message : undefined,
       fullErrorResponse: isAxiosError(error) ? JSON.stringify(error.response?.data, null, 2) : undefined
     });
+
+    // Motion's 400 messages for template creation are actionable (e.g. "The number of
+    // stages in the project does not match ... Expected stages: [...]", or the valid
+    // variable names for a stage), so pass them through instead of the generic 400 text.
+    if (isAxiosError(error) && error.response?.status === 400) {
+      const rawMessage: unknown = error.response.data?.message;
+      const apiMessage = Array.isArray(rawMessage) ? rawMessage.join('; ') : rawMessage;
+      if (typeof apiMessage === 'string' && apiMessage.trim()) {
+        throw new UserFacingError(
+          `Unable to create project "${projectData.name}". Motion API: ${apiMessage}`,
+          error.message,
+          error,
+          { action: 'create', resourceType: 'project', resourceName: projectData.name },
+          400
+        );
+      }
+    }
     throw ctx.api.formatApiError(error, 'create', 'project', undefined, projectData.name);
   }
 }

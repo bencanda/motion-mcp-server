@@ -15,7 +15,7 @@ export const TOOL_NAMES = {
 
 export const projectsToolDefinition: McpToolDefinition = {
   name: TOOL_NAMES.PROJECTS,
-  description: "Manage Motion projects - supports create, list, and get operations",
+  description: "Manage Motion projects - supports create, list, and get operations. To create a project from a project template, pass projectDefinitionId (the template ID, \"pde_...\") plus a stages array with one entry per template stage, in the template's order, each with stageDefinitionId (\"std_...\") and dueDate. The stage count must match the template exactly or Motion rejects the request. To find these IDs, run get on an existing project created from the same template: it returns ProjectDefinitionId and Stages[].stageDefinitionId.",
   inputSchema: {
     type: "object",
     properties: {
@@ -43,6 +43,57 @@ export const projectsToolDefinition: McpToolDefinition = {
       description: {
         type: "string",
         description: "Project description"
+      },
+      dueDate: {
+        type: "string",
+        description: "Project due date (for create). Format: YYYY-MM-DD, a full ISO 8601 timestamp with offset, or relative like 'today', 'tomorrow'. A date-only value is stored as end of day in the account's schedule timezone."
+      },
+      priority: {
+        type: "string",
+        enum: ["ASAP", "HIGH", "MEDIUM", "LOW"],
+        description: "Project priority (for create). Motion defaults to MEDIUM."
+      },
+      projectDefinitionId: {
+        type: "string",
+        description: "Project template ID, \"pde_...\" (for create only). Requires stages. Read it from an existing project's ProjectDefinitionId via the get operation."
+      },
+      stages: {
+        type: "array",
+        description: "Template stages (for create only; required when projectDefinitionId is set). One entry per stage, in the same order and number as the template. Read stageDefinitionId values from an existing project's Stages array via the get operation.",
+        items: {
+          type: "object",
+          properties: {
+            stageDefinitionId: {
+              type: "string",
+              description: "Stage definition ID, \"std_...\""
+            },
+            dueDate: {
+              type: "string",
+              description: "Stage due date. Same formats as the project dueDate."
+            },
+            variableInstances: {
+              type: "array",
+              description: "Optional role assignments for this stage, e.g. { variableName: \"Tech Lead\", value: \"<user ID>\" }",
+              items: {
+                type: "object",
+                properties: {
+                  variableName: {
+                    type: "string",
+                    description: "Name of the stage variable (e.g. the role name)"
+                  },
+                  value: {
+                    type: "string",
+                    description: "Value for the variable (e.g. a user ID for a person variable)"
+                  }
+                },
+                required: ["variableName", "value"],
+                additionalProperties: false
+              }
+            }
+          },
+          required: ["stageDefinitionId", "dueDate"],
+          additionalProperties: false
+        }
       },
       allWorkspaces: {
         type: "boolean",

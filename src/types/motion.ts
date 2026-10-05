@@ -86,6 +86,20 @@ export interface MotionProject {
   createdTime?: string;
   updatedTime?: string;
   customFieldValues?: Record<string, MotionCustomFieldValue>;
+  // Create-only fields (also returned by some API responses)
+  dueDate?: string;
+  priority?: MotionTaskPriority;
+  projectDefinitionId?: string;
+  stages?: MotionProjectStage[];
+}
+
+/**
+ * A stage of a project created from a project definition (template)
+ */
+export interface MotionProjectStage {
+  stageDefinitionId: string;
+  dueDate: string;
+  variableInstances?: Array<{ variableName: string; value: string }>;
 }
 
 /**

@@ -12,6 +12,17 @@ export interface MotionProjectsArgs {
   workspaceName?: string;
   name?: string;
   description?: string;
+  dueDate?: string;
+  priority?: 'ASAP' | 'HIGH' | 'MEDIUM' | 'LOW';
+  projectDefinitionId?: string;
+  stages?: {
+    stageDefinitionId: string;
+    dueDate: string;
+    variableInstances?: {
+      variableName: string;
+      value: string;
+    }[];
+  }[];
   allWorkspaces?: boolean;
 }
 
